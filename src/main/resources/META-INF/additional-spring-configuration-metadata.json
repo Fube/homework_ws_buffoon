@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "fube.rabbitmq.user.queue",
+      "type": "java.lang.String",
+      "description": "Description for fube.rabbitmq.user.queue."
+  }
+] }

@@ -1,5 +1,6 @@
 package com.abrari.buffoon.joke.services;
 
+import com.abrari.buffoon.broker.JokeBrokerage;
 import com.abrari.buffoon.exceptions.SQLNotFoundException;
 import com.abrari.buffoon.joke.datalayer.entities.Joke;
 import com.abrari.buffoon.joke.datalayer.repos.JokeRepository;
@@ -13,6 +14,7 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +23,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -44,6 +44,9 @@ public class JokeServiceImpl implements JokeService {
 
     @NonNull
     final private BiDirectionalMapping<Joke, JokeGUIDLessDTO> jokeGUIDLessDTOMapping;
+
+    @NonNull
+    final private JokeBrokerage jokeBrokerage;
 
     final private Supplier<SQLNotFoundException> createNewSQLNotFoundWithMessage = () -> new SQLNotFoundException("Joke not found");
 
@@ -108,6 +111,7 @@ public class JokeServiceImpl implements JokeService {
 
         var joke =  jokeRepository.findByGUID(guid).orElseThrow(createNewSQLNotFoundWithMessage);
         jokeRepository.deleteById(joke.getId());
+        jokeBrokerage.emitUserDeleted(guid);
         return jokeIDLessDTOMapping.mapToRight(joke);
     }
 

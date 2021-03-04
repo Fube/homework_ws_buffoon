@@ -6,9 +6,16 @@ import com.abrari.buffoon.joke.dto.JokeIDLessDTO;
 import com.abrari.buffoon.utils.BiDirectionalMapping;
 import com.abrari.buffoon.utils.BiDirectionalMappingImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.ConnectionFactory;
+import lombok.val;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 
 @Configuration
