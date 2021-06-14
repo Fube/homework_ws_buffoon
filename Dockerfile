@@ -1,4 +1,4 @@
-FROM maven:latest as builder
+FROM maven:3.8-adoptopenjdk-11 as builder
 WORKDIR /usr/src/app
 COPY src ./src
 COPY pom.xml .
